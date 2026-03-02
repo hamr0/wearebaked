@@ -18,10 +18,19 @@ import sys
 import time
 import argparse
 import json
+import os
 import select
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+
+
+def real_user_home():
+    """Get the real user's home dir, even under sudo."""
+    sudo_user = os.environ.get('SUDO_USER')
+    if sudo_user:
+        return Path(f'/home/{sudo_user}')
+    return Path.home()
 
 # ── Protocol numbers ──
 PROTOCOLS = {1: 'ICMP', 6: 'TCP', 17: 'UDP'}
@@ -692,6 +701,12 @@ class DeepCapture:
         html = HTML_TEMPLATE.replace('__REPORT_DATA__', report_data)
         out = Path(output_path).resolve()
         out.write_text(html)
+        # Fix ownership if running under sudo so the real user can open it
+        sudo_user = os.environ.get('SUDO_USER')
+        if sudo_user:
+            import pwd
+            pw = pwd.getpwnam(sudo_user)
+            os.chown(out, pw.pw_uid, pw.pw_gid)
         print(f'\nReport saved to {out}')
         print(f'Open it with: xdg-open {out}')
 
@@ -959,7 +974,8 @@ def main():
         print(f'\n\nCaptured {capture.total_packets} packets from {len(capture.ip_stats)} unique IPs')
         print(f'DNS queries: {len(capture.dns_queries)} | TLS hosts: {len(capture.sni_hosts)} | TCP sessions: {len(capture.tcp_sessions)}')
         if input('Save report? (y/N): ').strip().lower() == 'y':
-            path = input('Output path (default: ~/deep_report.html): ').strip() or str(Path.home() / 'deep_report.html')
+            default_path = real_user_home() / 'deep_report.html'
+            path = input(f'Output path (default: {default_path}): ').strip() or str(default_path)
             capture.generate_report(path)
 
     sock.close()

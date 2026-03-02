@@ -6,6 +6,18 @@ All analysis is local. No data leaves your browser. No accounts. No tracking.
 
 Available as a **Chrome extension** and **Firefox extension** (incl. Android).
 
+Open the dashboard to see which domains your browser contacts, how many are third-party trackers, and what categories they fall into. Filter the live request feed by domain, category, or third-party status.
+
+- **Privacy summary** — how many sites you visited vs. how many domains your browser talked to behind your back
+- **Category breakdown** — Advertising, Analytics, Fingerprinting, Social Tracking, CDN, and 10+ more
+- **Beaconing detection** — spots domains pinging on a timer
+- **Redirect chains** — see when one click bounces through five tracking domains
+- **Data flow** — which domains are uploading your data
+- **WebSocket monitoring** — persistent connections exposed
+- **Live request feed** — every request, filterable by domain, category, and third-party status
+
+No data is collected. No data is transmitted. No accounts. No cloud. Everything runs locally in your browser.
+
 ## Install
 
 **Chrome** — [Chrome Web Store](https://chromewebstore.google.com/) _(pending review)_
@@ -126,6 +138,11 @@ wearebaked/
 ```
 
 ## Changelog
+
+### v0.4.0
+- Added `net_monitor_poc.py` — deep network monitor POC with DNS query parsing, TLS SNI extraction, TCP state tracking, and process mapping
+- Updated README with feature descriptions
+- Firefox: bumped `strict_min_version` to 142.0, added `data_collection_permissions`
 
 ### v0.3.0
 - Added **Privacy Summary** section (visited sites count, domain risk bar, alert line) — Chrome and Firefox

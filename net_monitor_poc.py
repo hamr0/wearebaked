@@ -690,8 +690,10 @@ class DeepCapture:
         })
 
         html = HTML_TEMPLATE.replace('__REPORT_DATA__', report_data)
-        Path(output_path).write_text(html)
-        print(f'\nReport saved to {output_path}')
+        out = Path(output_path).resolve()
+        out.write_text(html)
+        print(f'\nReport saved to {out}')
+        print(f'Open it with: xdg-open {out}')
 
 
 # ── HTML Report Template ──
@@ -917,22 +919,25 @@ def main():
     capture = DeepCapture()
 
     if args.output:
-        print(f'Deep capture for {args.duration}s...')
+        print(f'Deep capture for {args.duration}s... (Ctrl+C to stop early and save)')
         end_time = time.time() + args.duration
 
-        while time.time() < end_time:
-            readable, _, _ = select.select([sock], [], [], 1.0)
-            for s in readable:
-                try:
-                    data = s.recv(65535)
-                    capture.process_packet(data)
-                except socket.timeout:
-                    pass
-            elapsed = int(time.time() - capture.start_time)
-            remaining = args.duration - elapsed
-            dns_count = len(capture.dns_queries)
-            sni_count = len(capture.sni_hosts)
-            print(f'\r  {elapsed}s | {capture.total_packets} pkts | {dns_count} DNS | {sni_count} TLS hosts | {remaining}s left', end='', flush=True)
+        try:
+            while time.time() < end_time:
+                readable, _, _ = select.select([sock], [], [], 1.0)
+                for s in readable:
+                    try:
+                        data = s.recv(65535)
+                        capture.process_packet(data)
+                    except socket.timeout:
+                        pass
+                elapsed = int(time.time() - capture.start_time)
+                remaining = args.duration - elapsed
+                dns_count = len(capture.dns_queries)
+                sni_count = len(capture.sni_hosts)
+                print(f'\r  {elapsed}s | {capture.total_packets} pkts | {dns_count} DNS | {sni_count} TLS hosts | {remaining}s left', end='', flush=True)
+        except KeyboardInterrupt:
+            print(f'\n  Stopped early after {int(time.time() - capture.start_time)}s')
 
         capture.generate_report(args.output)
         if args.json:

@@ -77,7 +77,7 @@ def parse_ip_header(data):
     ihl = (data[0] & 0x0F) * 4
     if len(data) < ihl:
         return None
-    total_len, _, _, ttl, proto = struct.unpack('!HHBBH', data[2:10])
+    total_len, _, _, ttl, proto = struct.unpack('!HHHBB', data[2:10])
     src = socket.inet_ntoa(data[12:16])
     dst = socket.inet_ntoa(data[16:20])
     return {
@@ -352,6 +352,7 @@ def get_local_ips():
     except Exception:
         pass
     ips.add('127.0.0.1')
+    ips.add('127.0.0.53')  # systemd-resolved stub
     return ips
 
 
@@ -411,7 +412,14 @@ class DeepCapture:
         # Try 0.0.0.0 (listening on all interfaces)
         return self.process_map.get(('0.0.0.0', port))
 
-    def process_packet(self, data):
+    def process_packet(self, raw_frame):
+        # Strip Ethernet header (14 bytes) if using AF_PACKET
+        if len(raw_frame) < 14:
+            return
+        eth_proto = struct.unpack('!H', raw_frame[12:14])[0]
+        if eth_proto != 0x0800:  # only IPv4
+            return
+        data = raw_frame[14:]
         hdr = parse_ip_header(data)
         if not hdr:
             return
@@ -808,7 +816,7 @@ while (doc.body.firstChild) app.appendChild(document.adoptNode(doc.body.firstChi
 </html>'''
 
 
-def live_monitor(sockets, capture):
+def live_monitor(sock, capture):
     """Print live traffic with deep inspection info."""
     print('Deep monitoring... (Ctrl+C to stop)')
     print(f'Local IPs: {", ".join(capture.local_ips)}')
@@ -817,9 +825,9 @@ def live_monitor(sockets, capture):
 
     while True:
         try:
-            readable, _, _ = select.select(sockets, [], [], 0.1)
-            for sock in readable:
-                data = sock.recv(65535)
+            readable, _, _ = select.select([sock], [], [], 0.1)
+            for s in readable:
+                data = s.recv(65535)
                 capture.process_packet(data)
                 conn = capture.connections[-1] if capture.connections else None
                 if not conn:
@@ -898,15 +906,13 @@ def main():
         print('Error: Raw socket capture requires Linux.')
         sys.exit(1)
 
+    # AF_PACKET captures all traffic at link layer (like Wireshark)
+    # ETH_P_ALL (0x0003) = all protocols
     try:
-        sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+        sock = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0003))
     except PermissionError:
         print('Error: Raw sockets require root. Run with: sudo python3 net_monitor_poc.py')
         sys.exit(1)
-
-    sock_udp = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_UDP)
-    sock_icmp = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-    sockets = [sock_tcp, sock_udp, sock_icmp]
 
     capture = DeepCapture()
 
@@ -915,10 +921,10 @@ def main():
         end_time = time.time() + args.duration
 
         while time.time() < end_time:
-            readable, _, _ = select.select(sockets, [], [], 1.0)
-            for sock in readable:
+            readable, _, _ = select.select([sock], [], [], 1.0)
+            for s in readable:
                 try:
-                    data = sock.recv(65535)
+                    data = s.recv(65535)
                     capture.process_packet(data)
                 except socket.timeout:
                     pass
@@ -942,7 +948,7 @@ def main():
             print(f'JSON saved to {args.json}')
     else:
         try:
-            live_monitor(sockets, capture)
+            live_monitor(sock, capture)
         except KeyboardInterrupt:
             pass
         print(f'\n\nCaptured {capture.total_packets} packets from {len(capture.ip_stats)} unique IPs')
@@ -951,8 +957,7 @@ def main():
             path = input('Output path (default: ~/deep_report.html): ').strip() or str(Path.home() / 'deep_report.html')
             capture.generate_report(path)
 
-    for s in sockets:
-        s.close()
+    sock.close()
 
 
 if __name__ == '__main__':

@@ -1,0 +1,41 @@
+name: Build Safari Extension
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Convert web extension to Safari app
+        run: |
+          xcrun safari-web-extension-converter ./safari-extension \
+            --app-name wearebaked \
+            --bundle-identifier com.wearebaked.extension \
+            --no-prompt \
+            --no-open \
+            --copy-resources
+
+      - name: Build Xcode project (unsigned)
+        run: |
+          cd wearebaked
+          xcodebuild \
+            -scheme "wearebaked (macOS)" \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Upload .app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wearebaked-safari
+          path: wearebaked/build/Build/Products/Release/wearebaked.app
+          if-no-files-found: warn

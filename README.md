@@ -4,7 +4,7 @@ See who your browser is talking to. A real-time network traffic dashboard that s
 
 All analysis is local. No data leaves your browser. No accounts. No tracking.
 
-Available as a **Chrome extension** and **Firefox extension** (incl. Android).
+Available as a **Chrome extension**, **Firefox extension** (incl. Android), and **Safari extension** (macOS).
 
 Open the dashboard to see which domains your browser contacts, how many are third-party trackers, and what categories they fall into. Filter the live request feed by domain, category, or third-party status.
 
@@ -24,6 +24,8 @@ No data is collected. No data is transmitted. No accounts. No cloud. Everything 
 
 **Firefox** — [Firefox Add-ons](https://addons.mozilla.org/) _(pending review)_
 
+**Safari** — Built via GitHub Actions (requires macOS). Download the `.app` artifact from the [Actions tab](../../actions/workflows/build-safari.yml), or build from source (see below).
+
 Click the extension icon to open the dashboard.
 
 ### Load from source (developer mode)
@@ -37,6 +39,13 @@ Click the extension icon to open the dashboard.
 1. Open `about:debugging#/runtime/this-firefox`
 2. Click **Load Temporary Add-on** → select `firefox-extension/manifest.json`
 3. Click the wearebaked icon in the toolbar to open the dashboard
+
+**Safari (macOS only):**
+1. Build the Xcode project (see "Building the Safari extension" below), or download the `.app` from GitHub Actions
+2. Run the generated `wearebaked.app` once to register the extension
+3. Open Safari → Settings → Extensions → enable **wearebaked**
+4. Click the extension icon in the toolbar to open the dashboard
+5. To test source changes: re-run `xcrun safari-web-extension-converter` and rebuild
 
 ### Manual testing checklist
 
@@ -100,10 +109,10 @@ Three-pass classification system to minimize "unknown" traffic:
 
 ## Permissions
 
-| Permission | Chrome (MV3) | Firefox (MV2) | Why |
-|---|---|---|---|
-| `webRequest` | Yes | Yes | Monitor network traffic |
-| `<all_urls>` | host_permissions | permissions | See requests to all domains |
+| Permission | Chrome (MV3) | Firefox (MV2) | Safari (MV2) | Why |
+|---|---|---|---|---|
+| `webRequest` | Yes | Yes | Yes | Monitor network traffic |
+| `<all_urls>` | host_permissions | permissions | permissions | See requests to all domains |
 
 No data is collected, transmitted, or stored outside the browser. All processing happens locally in the extension's background script.
 
@@ -129,6 +138,17 @@ wearebaked/
 │   ├── icon48.png          # Extension icon (white circle)
 │   ├── icon128.png         # Extension icon large (white circle)
 │   └── favicon.png         # Tab favicon
+├── safari-extension/
+│   ├── manifest.json      # MV2 manifest (no gecko-specific settings)
+│   ├── background.js      # Same as Firefox (browser.* APIs)
+│   ├── dashboard.html      # Same as Firefox
+│   ├── dashboard.js        # Same as Firefox
+│   ├── styles.css          # Same as Firefox
+│   ├── icon48.png          # Same as Firefox
+│   ├── icon128.png         # Same as Firefox
+│   └── favicon.png         # Same as Firefox
+├── .github/workflows/
+│   └── build-safari.yml   # GitHub Actions: build Safari .app on macOS runner
 ├── store_icon_128.png      # Chrome Web Store icon (128x128)
 ├── promo_tile.png          # Chrome Web Store promo tile (440x280)
 ├── screenshot1.png         # Store screenshot with text (1280x800)
@@ -137,7 +157,37 @@ wearebaked/
 └── README.md
 ```
 
+## Building the Safari Extension
+
+Safari Web Extensions require Xcode on macOS. A GitHub Actions workflow (`.github/workflows/build-safari.yml`) automates this on every push to `main`:
+
+1. `xcrun safari-web-extension-converter` converts `safari-extension/` into an Xcode project
+2. `xcodebuild` builds the `.app` (unsigned, for local development)
+3. The `.app` is uploaded as a GitHub Actions artifact
+
+**To build locally (macOS):**
+
+```bash
+# Convert the web extension into an Xcode project
+xcrun safari-web-extension-converter ./safari-extension \
+  --app-name wearebaked \
+  --bundle-identifier com.wearebaked.extension \
+  --no-prompt --no-open --copy-resources
+
+# Build the Xcode project (unsigned)
+cd wearebaked
+xcodebuild -scheme "wearebaked (macOS)" -configuration Release \
+  CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+```
+
+The Safari extension source is identical to Firefox (same `browser.*` API, MV2 manifest) with the `browser_specific_settings.gecko` block removed.
+
 ## Changelog
+
+### v0.4.1
+- Added Safari extension support (macOS) — based on Firefox source (`browser.*` API, MV2)
+- Added GitHub Actions workflow (`build-safari.yml`) to build Safari `.app` on macOS runner
+- Updated README with Safari install, build, and developer mode instructions
 
 ### v0.4.0
 - Added `net_monitor_poc.py` — deep network monitor POC with DNS query parsing, TLS SNI extraction, TCP state tracking, and process mapping

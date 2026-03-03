@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>wearebaked — Network Dashboard</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1><img src="icon48.png" class="icon" alt="wearebaked"> wearebaked</h1>
+  <p class="subtitle">Your browser's network traffic at a glance</p>
+
+  <div id="loading">Waiting for traffic data…</div>
+  <div id="app" style="display:none">
+
+    <!-- Summary cards -->
+    <div class="cards" id="cards"></div>
+
+    <!-- Privacy Summary -->
+    <div class="section" id="sec-privacy">
+      <div id="privacy-summary"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button id="btn-clear" class="btn btn-danger">Clear Data</button>
+      <label class="auto-refresh">
+        <input type="checkbox" id="chk-auto" checked> Auto-refresh (3s)
+      </label>
+    </div>
+
+    <!-- Top third-party domains -->
+    <div class="section" id="sec-domains">
+      <h2>Top Third-Party Domains</h2>
+      <div id="domain-list" class="domain-grid"></div>
+    </div>
+
+    <!-- Category breakdown -->
+    <div class="section" id="sec-categories">
+      <h2>Request Categories</h2>
+      <div id="cat-bars"></div>
+    </div>
+
+    <!-- Per-tab breakdown -->
+    <div class="section" id="sec-tabs">
+      <h2>Active Tabs</h2>
+      <div id="tab-list" class="domain-grid"></div>
+    </div>
+
+    <!-- Beaconing Alerts -->
+    <div class="section">
+      <div class="table-toggle" id="toggle-beacons">
+        <h2>Beaconing Alerts</h2>
+        <span class="toggle-hint">Click to expand</span>
+      </div>
+      <div id="beacon-wrap" style="display:none">
+        <div id="beacon-list"></div>
+      </div>
+    </div>
+
+    <!-- New Domains -->
+    <div class="section">
+      <div class="table-toggle" id="toggle-new">
+        <h2>New Domains This Session</h2>
+        <span class="toggle-hint">Click to expand</span>
+      </div>
+      <div id="new-wrap" style="display:none">
+        <div id="new-list" class="domain-grid"></div>
+      </div>
+    </div>
+
+    <!-- Redirect Chains -->
+    <div class="section">
+      <div class="table-toggle" id="toggle-redirects">
+        <h2>Redirect Chains</h2>
+        <span class="toggle-hint">Click to expand</span>
+      </div>
+      <div id="redirect-wrap" style="display:none">
+        <div id="redirect-list"></div>
+      </div>
+    </div>
+
+    <!-- Data Flow -->
+    <div class="section">
+      <div class="table-toggle" id="toggle-dataflow">
+        <h2>Data Flow</h2>
+        <span class="toggle-hint">Click to expand</span>
+      </div>
+      <div id="dataflow-wrap" style="display:none">
+        <div id="dataflow-list"></div>
+      </div>
+    </div>
+
+    <!-- WebSockets -->
+    <div class="section">
+      <div class="table-toggle" id="toggle-ws">
+        <h2>WebSockets</h2>
+        <span class="toggle-hint">Click to expand</span>
+      </div>
+      <div id="ws-wrap" style="display:none">
+        <div id="ws-list"></div>
+      </div>
+    </div>
+
+    <!-- Live feed -->
+    <div class="section">
+      <div class="table-toggle" id="toggle-feed">
+        <h2>Live Request Feed</h2>
+        <span class="toggle-hint">Click to expand</span>
+      </div>
+      <div id="feed-wrap" class="table-wrap" style="display:none">
+        <div class="filters">
+          <input type="text" id="feed-search" placeholder="Search domain...">
+          <select id="feed-cat-filter">
+            <option value="">All Categories</option>
+          </select>
+          <label class="feed-toggle"><input type="checkbox" id="feed-3p-only"> 3rd party only</label>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Domain</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Category</th>
+              <th>3rd Party</th>
+            </tr>
+          </thead>
+          <tbody id="feed-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">wearebaked · All analysis is local · No data leaves your browser</div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

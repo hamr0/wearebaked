@@ -23,7 +23,7 @@ function fmtInterval(ms) {
   return (sec / 60).toFixed(1) + 'min';
 }
 
-const RISKY_CATEGORIES = ['Advertising', 'Analytics', 'Social Tracking', 'Fingerprinting', 'A/B Testing'];
+const RISKY_CATEGORIES = ['Advertising', 'Analytics', 'Social Tracking', 'Fingerprinting', 'A/B Testing', 'Data Broker'];
 const BENIGN_CATEGORIES = ['cdn', 'fonts', 'captcha', 'payment', 'auth', 'maps', 'Video/Media', 'Chat/Support', 'Consent', 'Email/CRM', 'Error Monitoring'];
 
 function catClass(category) {
@@ -43,7 +43,8 @@ function catClass(category) {
     'Consent': 'cat-consent',
     'Email/CRM': 'cat-email',
     'auth': 'cat-auth',
-    'maps': 'cat-maps'
+    'maps': 'cat-maps',
+    'Data Broker': 'cat-databroker'
   };
   return map[category] || 'cat-unknown';
 }
@@ -67,6 +68,7 @@ function catColor(category) {
     'Email/CRM': '#d35400',
     'auth': 'var(--blue)',
     'maps': 'var(--green)',
+    'Data Broker': '#e056a0',
     'unknown': 'var(--text2)'
   };
   return map[category] || 'var(--text2)';
@@ -91,12 +93,18 @@ function renderCards(data) {
   const pct = totals.count > 0 ? Math.round((totals.thirdParty / totals.count) * 100) : 0;
   const wsCount = Object.keys(websockets || {}).length;
 
+  let tpScripts = 0;
+  for (const d of Object.values(domains)) {
+    if (d.thirdPartyOn.length > 0 && d.types.script) tpScripts += d.types.script;
+  }
+
   const cards = [
     { label: 'Total Requests', val: totals.count, cls: 'accent' },
     { label: 'Unique Domains', val: uniqueDomains, cls: 'blue' },
     { label: 'Third-Party', val: `${pct}%`, cls: pct > 60 ? 'red' : pct > 30 ? 'orange' : 'green' },
     { label: 'Trackers / Ads', val: riskyDomains, cls: riskyDomains > 5 ? 'red' : riskyDomains > 0 ? 'orange' : 'green' },
     { label: '3P Domains', val: thirdPartyDomains, cls: thirdPartyDomains > 10 ? 'orange' : 'blue' },
+    { label: '3P Scripts', val: tpScripts, cls: tpScripts > 50 ? 'red' : tpScripts > 20 ? 'orange' : 'green' },
     { label: 'WebSockets', val: wsCount, cls: wsCount > 0 ? 'orange' : 'green' }
   ];
 
@@ -270,8 +278,76 @@ function renderDomains(data) {
     item.appendChild(name);
     item.appendChild(badge);
     item.appendChild(cat);
+    if (info.classification.brokerName) {
+      const broker = document.createElement('span');
+      broker.className = 'pill-broker';
+      broker.textContent = 'DATA BROKER';
+      broker.title = info.classification.brokerName;
+      item.appendChild(broker);
+    }
     item.appendChild(count);
     el.appendChild(item);
+  }
+}
+
+function renderBrokers(data) {
+  const { domains } = data;
+  const el = document.getElementById('broker-list');
+  el.textContent = '';
+
+  const brokers = Object.entries(domains)
+    .filter(([, d]) => d.classification.brokerName)
+    .sort((a, b) => b[1].count - a[1].count);
+
+  if (brokers.length === 0) {
+    el.textContent = 'No data broker connections detected yet.';
+    el.style.color = 'var(--text2)';
+    el.style.fontStyle = 'italic';
+    return;
+  }
+
+  // Group by broker type
+  const groups = {};
+  for (const [domain, info] of brokers) {
+    const type = info.classification.brokerType || 'Other';
+    if (!groups[type]) groups[type] = [];
+    groups[type].push([domain, info]);
+  }
+
+  const typeOrder = ['Consumer Data Broker', 'Data Marketplace', 'Identity Resolution', 'Audience Data'];
+  const sortedTypes = Object.keys(groups).sort((a, b) => {
+    const ai = typeOrder.indexOf(a);
+    const bi = typeOrder.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+
+  for (const type of sortedTypes) {
+    const header = document.createElement('div');
+    header.className = 'broker-type-header';
+    header.textContent = type + ' (' + groups[type].length + ')';
+    el.appendChild(header);
+
+    for (const [domain, info] of groups[type]) {
+      const item = document.createElement('div');
+      item.className = 'broker-item';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'domain-name';
+      nameSpan.textContent = info.classification.brokerName + ' (' + domain + ')';
+
+      const desc = document.createElement('span');
+      desc.className = 'broker-desc';
+      desc.textContent = info.classification.brokerDesc;
+
+      const count = document.createElement('span');
+      count.className = 'count';
+      count.textContent = info.count + ' req';
+
+      item.appendChild(nameSpan);
+      item.appendChild(desc);
+      item.appendChild(count);
+      el.appendChild(item);
+    }
   }
 }
 
@@ -695,6 +771,7 @@ function fetchAndRender() {
     renderDomains(data);
     renderCategories(data);
     renderTabs(data);
+    renderBrokers(data);
     renderBeacons(data);
     renderNewDomains(data);
     renderRedirects(data);
@@ -731,6 +808,7 @@ function startDashboard() {
   document.getElementById('feed-3p-only').addEventListener('change', filterFeed);
 
   // Attach all toggles
+  attachToggle('toggle-brokers', 'broker-wrap');
   attachToggle('toggle-beacons', 'beacon-wrap');
   attachToggle('toggle-new', 'new-wrap');
   attachToggle('toggle-redirects', 'redirect-wrap');

@@ -23,6 +23,9 @@ function fmtInterval(ms) {
   return (sec / 60).toFixed(1) + 'min';
 }
 
+const RISKY_CATEGORIES = ['Advertising', 'Analytics', 'Social Tracking', 'Fingerprinting', 'A/B Testing', 'Data Broker'];
+const BENIGN_CATEGORIES = ['cdn', 'fonts', 'captcha', 'payment', 'auth', 'maps', 'Video/Media', 'Chat/Support', 'Consent', 'Email/CRM', 'Error Monitoring'];
+
 function catClass(category) {
   const map = {
     'Advertising': 'cat-advertising',
@@ -40,7 +43,8 @@ function catClass(category) {
     'Consent': 'cat-consent',
     'Email/CRM': 'cat-email',
     'auth': 'cat-auth',
-    'maps': 'cat-maps'
+    'maps': 'cat-maps',
+    'Data Broker': 'cat-databroker'
   };
   return map[category] || 'cat-unknown';
 }
@@ -64,13 +68,11 @@ function catColor(category) {
     'Email/CRM': '#d35400',
     'auth': 'var(--blue)',
     'maps': 'var(--green)',
+    'Data Broker': '#e056a0',
     'unknown': 'var(--text2)'
   };
   return map[category] || 'var(--text2)';
 }
-
-const RISKY_CATEGORIES = ['Advertising', 'Analytics', 'Social Tracking', 'Fingerprinting', 'A/B Testing'];
-const BENIGN_CATEGORIES = ['cdn', 'fonts', 'captcha', 'payment', 'auth', 'maps', 'Video/Media', 'Chat/Support', 'Consent', 'Email/CRM', 'Error Monitoring'];
 
 function attachToggle(toggleId, wrapId) {
   const wrap = document.getElementById(wrapId);
@@ -91,12 +93,18 @@ function renderCards(data) {
   const pct = totals.count > 0 ? Math.round((totals.thirdParty / totals.count) * 100) : 0;
   const wsCount = Object.keys(websockets || {}).length;
 
+  let tpScripts = 0;
+  for (const d of Object.values(domains)) {
+    if (d.thirdPartyOn.length > 0 && d.types.script) tpScripts += d.types.script;
+  }
+
   const cards = [
     { label: 'Total Requests', val: totals.count, cls: 'accent' },
     { label: 'Unique Domains', val: uniqueDomains, cls: 'blue' },
     { label: 'Third-Party', val: `${pct}%`, cls: pct > 60 ? 'red' : pct > 30 ? 'orange' : 'green' },
     { label: 'Trackers / Ads', val: riskyDomains, cls: riskyDomains > 5 ? 'red' : riskyDomains > 0 ? 'orange' : 'green' },
     { label: '3P Domains', val: thirdPartyDomains, cls: thirdPartyDomains > 10 ? 'orange' : 'blue' },
+    { label: '3P Scripts', val: tpScripts, cls: tpScripts > 50 ? 'red' : tpScripts > 20 ? 'orange' : 'green' },
     { label: 'WebSockets', val: wsCount, cls: wsCount > 0 ? 'orange' : 'green' }
   ];
 
@@ -141,7 +149,7 @@ function renderPrivacySummary(data) {
     if (RISKY_CATEGORIES.includes(cat)) riskyCount++;
     else if (BENIGN_CATEGORIES.includes(cat)) benignCount++;
     else if (cat === 'unknown') unknownCount++;
-    else benignCount++;
+    else benignCount++; // First Party and anything else goes benign
   }
 
   // Main sentence
@@ -212,27 +220,52 @@ function renderPrivacySummary(data) {
 
 function renderDomains(data) {
   const { domains } = data;
-  const thirdParty = Object.entries(domains)
+
+  // Filter to risky or unknown only, exclude benign
+  const concerning = Object.entries(domains)
     .filter(([, v]) => v.thirdPartyOn.length > 0)
-    .sort((a, b) => b[1].count - a[1].count)
-    .slice(0, 20);
+    .filter(([, v]) => {
+      const cat = v.classification.category;
+      return v.classification.risky || cat === 'unknown';
+    });
+
+  // Compute concern score per domain
+  const scored = concerning.map(([domain, info]) => {
+    const risky = info.classification.risky ? 50 : 0;
+    const beacon = (info.beaconScore || 0) * 0.3;
+    const uploadHeavy = (info.bytesSent > 0 && info.bytesSent > info.bytesReceived * 0.5) ? 20 : 0;
+    const thirdPartySpread = (info.thirdPartyOn.length || 0) * 2;
+    const score = Math.min(100, risky + beacon + uploadHeavy + thirdPartySpread);
+    return [domain, info, score];
+  });
+
+  // Sort by concern score descending
+  scored.sort((a, b) => b[2] - a[2]);
+  const top = scored.slice(0, 20);
 
   const el = document.getElementById('domain-list');
   el.textContent = '';
-  if (thirdParty.length === 0) {
-    el.textContent = 'No third-party requests captured yet. Browse some sites first.';
+  if (top.length === 0) {
+    el.textContent = 'No domains of concern detected. Browse some sites first.';
     el.style.color = 'var(--text2)';
     el.style.fontStyle = 'italic';
     return;
   }
 
-  for (const [domain, info] of thirdParty) {
+  for (const [domain, info, score] of top) {
     const item = document.createElement('div');
     item.className = 'domain-item';
 
     const name = document.createElement('span');
     name.className = 'domain-name';
     name.textContent = domain;
+
+    const badge = document.createElement('span');
+    badge.className = 'concern-badge';
+    badge.textContent = Math.round(score);
+    if (score >= 60) badge.classList.add('concern-high');
+    else if (score >= 30) badge.classList.add('concern-med');
+    else badge.classList.add('concern-low');
 
     const cat = document.createElement('span');
     cat.className = 'domain-cat ' + catClass(info.classification.category);
@@ -243,9 +276,78 @@ function renderDomains(data) {
     count.textContent = info.count + ' req';
 
     item.appendChild(name);
+    item.appendChild(badge);
     item.appendChild(cat);
+    if (info.classification.brokerName) {
+      const broker = document.createElement('span');
+      broker.className = 'pill-broker';
+      broker.textContent = 'DATA BROKER';
+      broker.title = info.classification.brokerName;
+      item.appendChild(broker);
+    }
     item.appendChild(count);
     el.appendChild(item);
+  }
+}
+
+function renderBrokers(data) {
+  const { domains } = data;
+  const el = document.getElementById('broker-list');
+  el.textContent = '';
+
+  const brokers = Object.entries(domains)
+    .filter(([, d]) => d.classification.brokerName)
+    .sort((a, b) => b[1].count - a[1].count);
+
+  if (brokers.length === 0) {
+    el.textContent = 'No data broker connections detected yet.';
+    el.style.color = 'var(--text2)';
+    el.style.fontStyle = 'italic';
+    return;
+  }
+
+  // Group by broker type
+  const groups = {};
+  for (const [domain, info] of brokers) {
+    const type = info.classification.brokerType || 'Other';
+    if (!groups[type]) groups[type] = [];
+    groups[type].push([domain, info]);
+  }
+
+  const typeOrder = ['Consumer Data Broker', 'Data Marketplace', 'Identity Resolution', 'Audience Data'];
+  const sortedTypes = Object.keys(groups).sort((a, b) => {
+    const ai = typeOrder.indexOf(a);
+    const bi = typeOrder.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+
+  for (const type of sortedTypes) {
+    const header = document.createElement('div');
+    header.className = 'broker-type-header';
+    header.textContent = type + ' (' + groups[type].length + ')';
+    el.appendChild(header);
+
+    for (const [domain, info] of groups[type]) {
+      const item = document.createElement('div');
+      item.className = 'broker-item';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'domain-name';
+      nameSpan.textContent = info.classification.brokerName + ' (' + domain + ')';
+
+      const desc = document.createElement('span');
+      desc.className = 'broker-desc';
+      desc.textContent = info.classification.brokerDesc;
+
+      const count = document.createElement('span');
+      count.className = 'count';
+      count.textContent = info.count + ' req';
+
+      item.appendChild(nameSpan);
+      item.appendChild(desc);
+      item.appendChild(count);
+      el.appendChild(item);
+    }
   }
 }
 
@@ -389,11 +491,15 @@ function renderNewDomains(data) {
 
   const newDomains = Object.entries(domains)
     .filter(([, d]) => d.isNew)
+    .filter(([, d]) => {
+      const cat = d.classification.category;
+      return !BENIGN_CATEGORIES.includes(cat);
+    })
     .sort((a, b) => b[1].firstSeen - a[1].firstSeen)
     .slice(0, 30);
 
   if (newDomains.length === 0) {
-    el.textContent = 'No new domains this session.';
+    el.textContent = 'No suspicious new domains this session.';
     el.style.color = 'var(--text2)';
     el.style.fontStyle = 'italic';
     return;
@@ -656,7 +762,7 @@ function filterFeed() {
 
 /* ── Data fetching ── */
 function fetchAndRender() {
-  browser.runtime.sendMessage({ type: 'getTraffic' }, (data) => {
+  chrome.runtime.sendMessage({ type: 'getTraffic' }, (data) => {
     if (!data) return;
     document.getElementById('loading').style.display = 'none';
     document.getElementById('app').style.display = 'block';
@@ -665,6 +771,7 @@ function fetchAndRender() {
     renderDomains(data);
     renderCategories(data);
     renderTabs(data);
+    renderBrokers(data);
     renderBeacons(data);
     renderNewDomains(data);
     renderRedirects(data);
@@ -691,7 +798,7 @@ function startDashboard() {
   // Clear data
   document.getElementById('btn-clear').addEventListener('click', () => {
     if (confirm('Clear all captured traffic data?')) {
-      browser.runtime.sendMessage({ type: 'clearTraffic' }, () => fetchAndRender());
+      chrome.runtime.sendMessage({ type: 'clearTraffic' }, () => fetchAndRender());
     }
   });
 
@@ -701,6 +808,7 @@ function startDashboard() {
   document.getElementById('feed-3p-only').addEventListener('change', filterFeed);
 
   // Attach all toggles
+  attachToggle('toggle-brokers', 'broker-wrap');
   attachToggle('toggle-beacons', 'beacon-wrap');
   attachToggle('toggle-new', 'new-wrap');
   attachToggle('toggle-redirects', 'redirect-wrap');

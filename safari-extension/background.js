@@ -23,7 +23,7 @@ const TRACKER_DOMAINS = {
   'googleadservices.com': 'Advertising',
   'ads-twitter.com': 'Advertising',
   'amazon-adsystem.com': 'Advertising',
-  'criteo.com': 'Advertising',
+  'criteo.com': 'Data Broker',
   'outbrain.com': 'Advertising',
   'taboola.com': 'Advertising',
   'adnxs.com': 'Advertising',
@@ -31,8 +31,8 @@ const TRACKER_DOMAINS = {
   'pubmatic.com': 'Advertising',
   'openx.net': 'Advertising',
   'casalemedia.com': 'Advertising',
-  'moatads.com': 'Advertising',
-  'adsrvr.org': 'Advertising',
+  'moatads.com': 'Data Broker',
+  'adsrvr.org': 'Data Broker',
   'media.net': 'Advertising',
   'bidswitch.net': 'Advertising',
   'sharethrough.com': 'Advertising',
@@ -102,8 +102,8 @@ const TRACKER_DOMAINS = {
   'googletagmanager.com': 'Analytics',
   'hotjar.com': 'Analytics',
   'mixpanel.com': 'Analytics',
-  'segment.io': 'Analytics',
-  'segment.com': 'Analytics',
+  'segment.io': 'Data Broker',
+  'segment.com': 'Data Broker',
   'newrelic.com': 'Analytics',
   'clarity.ms': 'Analytics',
   'scorecardresearch.com': 'Analytics',
@@ -140,13 +140,13 @@ const TRACKER_DOMAINS = {
   'keen.io': 'Analytics',
   'countly.com': 'Analytics',
   'alexametrics.com': 'Analytics',
-  'omtrdc.net': 'Analytics',
-  'demdex.net': 'Analytics',
+  'omtrdc.net': 'Data Broker',
+  'demdex.net': 'Data Broker',
   'omniture.com': 'Analytics',
   'adobedtm.com': 'Analytics',
   'coremetrics.com': 'Analytics',
   'webtrends.com': 'Analytics',
-  'tealiumiq.com': 'Analytics',
+  'tealiumiq.com': 'Data Broker',
   'tealium.com': 'Analytics',
   'ensighten.com': 'Analytics',
   'commandersact.com': 'Analytics',
@@ -154,11 +154,11 @@ const TRACKER_DOMAINS = {
   'atinternet.com': 'Analytics',
   'piano.io': 'Analytics',
   'cxense.com': 'Analytics',
-  'permutive.com': 'Analytics',
+  'permutive.com': 'Data Broker',
   'rudderstack.com': 'Analytics',
   'mparticle.com': 'Analytics',
   'lytics.io': 'Analytics',
-  'treasuredata.com': 'Analytics',
+  'treasuredata.com': 'Data Broker',
   'snowplow.io': 'Analytics',
 
   // Social Tracking
@@ -184,30 +184,32 @@ const TRACKER_DOMAINS = {
   'redditstatic.com': 'Social Tracking',
   'quora.com': 'Social Tracking',
   'tumblr.com': 'Social Tracking',
-  'addthis.com': 'Social Tracking',
+  'addthis.com': 'Data Broker',
   'addtoany.com': 'Social Tracking',
   'sharethis.com': 'Social Tracking',
   'sumo.com': 'Social Tracking',
 
   // Fingerprinting
-  'krxd.net': 'Fingerprinting',
-  'bluekai.com': 'Fingerprinting',
-  'exelator.com': 'Fingerprinting',
-  'agkn.com': 'Fingerprinting',
-  'pippio.com': 'Fingerprinting',
-  'rlcdn.com': 'Fingerprinting',
-  'tapad.com': 'Fingerprinting',
-  'liveramp.com': 'Fingerprinting',
-  'adsymptotic.com': 'Fingerprinting',
-  'crwdcntrl.net': 'Fingerprinting',
-  'lotame.com': 'Fingerprinting',
-  'eyeota.net': 'Fingerprinting',
-  'bombora.com': 'Fingerprinting',
-  'intentiq.com': 'Fingerprinting',
-  'id5-sync.com': 'Fingerprinting',
-  'liveintent.com': 'Fingerprinting',
-  'zeotap.com': 'Fingerprinting',
   'fingerprintjs.com': 'Fingerprinting',
+
+  // Data Broker (reclassified from Fingerprinting)
+  'krxd.net': 'Data Broker',
+  'bluekai.com': 'Data Broker',
+  'exelator.com': 'Data Broker',
+  'agkn.com': 'Data Broker',
+  'pippio.com': 'Data Broker',
+  'rlcdn.com': 'Data Broker',
+  'tapad.com': 'Data Broker',
+  'liveramp.com': 'Data Broker',
+  'adsymptotic.com': 'Data Broker',
+  'crwdcntrl.net': 'Data Broker',
+  'lotame.com': 'Data Broker',
+  'eyeota.net': 'Data Broker',
+  'bombora.com': 'Data Broker',
+  'intentiq.com': 'Data Broker',
+  'id5-sync.com': 'Data Broker',
+  'liveintent.com': 'Data Broker',
+  'zeotap.com': 'Data Broker',
 
   // Error Monitoring
   'sentry.io': 'Error Monitoring',
@@ -347,7 +349,149 @@ const TRACKER_DOMAINS = {
   'marketo.com': 'Email/CRM',
   'marketo.net': 'Email/CRM',
   'eloqua.com': 'Email/CRM',
-  'act-on.com': 'Email/CRM'
+  'act-on.com': 'Email/CRM',
+
+  // Data Broker
+  'acxiom.com': 'Data Broker',
+  'experian.com': 'Data Broker',
+  'experianmarketingservices.digital': 'Data Broker',
+  'transunion.com': 'Data Broker',
+  'signal.co': 'Data Broker',
+  'equifax.com': 'Data Broker',
+  'lexisnexis.com': 'Data Broker',
+  'lexisnexisrisk.com': 'Data Broker',
+  'spokeo.com': 'Data Broker',
+  'beenverified.com': 'Data Broker',
+  'whitepages.com': 'Data Broker',
+  'peoplefinder.com': 'Data Broker',
+  'intelius.com': 'Data Broker',
+  'towerdata.com': 'Data Broker',
+  'fullcontact.com': 'Data Broker',
+  'epsilon.com': 'Data Broker',
+  'corelogic.com': 'Data Broker',
+  'datalogix.com': 'Data Broker',
+  'peoplesmart.com': 'Data Broker',
+  'instantcheckmate.com': 'Data Broker',
+  'truthfinder.com': 'Data Broker',
+  'pipl.com': 'Data Broker',
+  'zoominfo.com': 'Data Broker',
+  'clearbit.com': 'Data Broker',
+  'bkrtx.com': 'Data Broker',
+  'eyeota.com': 'Data Broker',
+  'ml314.com': 'Data Broker',
+  'nielsen.com': 'Data Broker',
+  'imrworldwide.com': 'Data Broker',
+  'neustar.biz': 'Data Broker',
+  'owneriq.net': 'Data Broker',
+  'dataexchangegroup.com': 'Data Broker',
+  'thetradedesk.com': 'Data Broker',
+  'sharedid.org': 'Data Broker',
+  'criteo.net': 'Data Broker',
+  'drawbridge.com': 'Data Broker',
+  'liadm.com': 'Data Broker',
+  'intentmedia.net': 'Data Broker',
+  'britepool.com': 'Data Broker',
+  'idx.lat': 'Data Broker',
+  'merkle.com': 'Data Broker',
+  'merkleinc.com': 'Data Broker',
+  'zetaglobal.com': 'Data Broker',
+  'salesforceliveagent.com': 'Data Broker',
+  'permutive.app': 'Data Broker',
+  'oracleinfinity.io': 'Data Broker',
+  'grapeshot.co.uk': 'Data Broker',
+  '1rx.io': 'Data Broker',
+  'kochava.com': 'Data Broker',
+  'narrativ.com': 'Data Broker',
+  'webtrekk.net': 'Data Broker',
+  'mxptint.net': 'Data Broker',
+  'blueconic.net': 'Data Broker',
+  'tiqcdn.com': 'Data Broker'
+};
+
+/* ── Broker metadata (from wearesold) ── */
+const BROKER_META = {
+  'acxiom.com': { name: 'Acxiom', type: 'Consumer Data Broker', desc: 'Aggregates and sells consumer profiles' },
+  'liveramp.com': { name: 'LiveRamp', type: 'Identity Resolution', desc: 'Cross-device identity matching and data onboarding' },
+  'rlcdn.com': { name: 'LiveRamp', type: 'Identity Resolution', desc: 'Cross-device identity matching and data onboarding' },
+  'pippio.com': { name: 'LiveRamp', type: 'Identity Resolution', desc: 'Cross-device identity matching and data onboarding' },
+  'experian.com': { name: 'Experian', type: 'Consumer Data Broker', desc: 'Credit bureau that also sells marketing data' },
+  'experianmarketingservices.digital': { name: 'Experian Marketing', type: 'Consumer Data Broker', desc: 'Sells consumer marketing segments' },
+  'transunion.com': { name: 'TransUnion', type: 'Consumer Data Broker', desc: 'Credit bureau that also sells marketing data' },
+  'signal.co': { name: 'TransUnion Signal', type: 'Identity Resolution', desc: 'Real-time identity resolution and data onboarding' },
+  'equifax.com': { name: 'Equifax', type: 'Consumer Data Broker', desc: 'Credit bureau that also sells consumer data segments' },
+  'lexisnexis.com': { name: 'LexisNexis', type: 'Consumer Data Broker', desc: 'Aggregates public records and consumer data' },
+  'lexisnexisrisk.com': { name: 'LexisNexis Risk', type: 'Consumer Data Broker', desc: 'Risk and identity data solutions' },
+  'spokeo.com': { name: 'Spokeo', type: 'Consumer Data Broker', desc: 'People search engine selling personal profiles' },
+  'beenverified.com': { name: 'BeenVerified', type: 'Consumer Data Broker', desc: 'People search and background check data' },
+  'whitepages.com': { name: 'Whitepages', type: 'Consumer Data Broker', desc: 'People search and contact data broker' },
+  'peoplefinder.com': { name: 'PeopleFinder', type: 'Consumer Data Broker', desc: 'People search and public records data' },
+  'intelius.com': { name: 'Intelius', type: 'Consumer Data Broker', desc: 'People search and background check data' },
+  'towerdata.com': { name: 'TowerData', type: 'Consumer Data Broker', desc: 'Email-based identity and demographic data' },
+  'fullcontact.com': { name: 'FullContact', type: 'Consumer Data Broker', desc: 'Identity resolution and person-level data enrichment' },
+  'epsilon.com': { name: 'Epsilon', type: 'Consumer Data Broker', desc: 'Consumer data and marketing platform' },
+  'corelogic.com': { name: 'CoreLogic', type: 'Consumer Data Broker', desc: 'Property and consumer data aggregator' },
+  'datalogix.com': { name: 'Oracle DataLogix', type: 'Consumer Data Broker', desc: 'Offline purchase data linked to online profiles' },
+  'peoplesmart.com': { name: 'PeopleSmart', type: 'Consumer Data Broker', desc: 'People search and data broker' },
+  'instantcheckmate.com': { name: 'Instant Checkmate', type: 'Consumer Data Broker', desc: 'Background check and people search' },
+  'truthfinder.com': { name: 'TruthFinder', type: 'Consumer Data Broker', desc: 'People search and background check' },
+  'pipl.com': { name: 'Pipl', type: 'Consumer Data Broker', desc: 'Identity search and person data API' },
+  'zoominfo.com': { name: 'ZoomInfo', type: 'Consumer Data Broker', desc: 'Business contact and company data broker' },
+  'clearbit.com': { name: 'Clearbit', type: 'Consumer Data Broker', desc: 'Business identity and enrichment data' },
+  'bluekai.com': { name: 'Oracle BlueKai', type: 'Data Marketplace', desc: 'Data marketplace for buying/selling audience segments' },
+  'bkrtx.com': { name: 'Oracle BlueKai', type: 'Data Marketplace', desc: 'Data marketplace for buying/selling audience segments' },
+  'addthis.com': { name: 'Oracle AddThis', type: 'Data Marketplace', desc: 'Web tracking feeding Oracle data marketplace' },
+  'lotame.com': { name: 'Lotame', type: 'Data Marketplace', desc: 'Data exchange and audience platform' },
+  'crwdcntrl.net': { name: 'Lotame', type: 'Data Marketplace', desc: 'Data exchange and audience platform' },
+  'eyeota.net': { name: 'Eyeota', type: 'Data Marketplace', desc: 'Audience data marketplace' },
+  'eyeota.com': { name: 'Eyeota', type: 'Data Marketplace', desc: 'Audience data marketplace' },
+  'bombora.com': { name: 'Bombora', type: 'Data Marketplace', desc: 'B2B intent data marketplace' },
+  'ml314.com': { name: 'Bombora', type: 'Data Marketplace', desc: 'B2B intent data marketplace' },
+  'zeotap.com': { name: 'Zeotap', type: 'Data Marketplace', desc: 'Customer data platform and data marketplace' },
+  'intentiq.com': { name: 'Intent IQ', type: 'Data Marketplace', desc: 'Identity-based data monetization' },
+  'nielsen.com': { name: 'Nielsen', type: 'Data Marketplace', desc: 'Audience measurement and data marketplace' },
+  'imrworldwide.com': { name: 'Nielsen', type: 'Data Marketplace', desc: 'Audience measurement and data marketplace' },
+  'exelator.com': { name: 'Nielsen eXelate', type: 'Data Marketplace', desc: 'Data exchange for buying/selling audience data' },
+  'neustar.biz': { name: 'Neustar/TransUnion', type: 'Data Marketplace', desc: 'Identity and marketing data services' },
+  'agkn.com': { name: 'Neustar/TransUnion', type: 'Data Marketplace', desc: 'Identity and marketing data services' },
+  'owneriq.net': { name: 'Inmar/OwnerIQ', type: 'Data Marketplace', desc: 'Commerce data marketplace' },
+  'dataexchangegroup.com': { name: 'Data Exchange Group', type: 'Data Marketplace', desc: 'Third-party data marketplace' },
+  'tapad.com': { name: 'Tapad', type: 'Identity Resolution', desc: 'Cross-device identity graph' },
+  'id5-sync.com': { name: 'ID5', type: 'Identity Resolution', desc: 'Shared identity infrastructure for ad tech' },
+  'adsrvr.org': { name: 'The Trade Desk', type: 'Identity Resolution', desc: 'Unified ID 2.0 identity framework' },
+  'thetradedesk.com': { name: 'The Trade Desk', type: 'Identity Resolution', desc: 'Unified ID 2.0 identity framework' },
+  'sharedid.org': { name: 'SharedID', type: 'Identity Resolution', desc: 'Prebid shared identity module' },
+  'criteo.com': { name: 'Criteo', type: 'Identity Resolution', desc: 'Cross-device identity and retargeting' },
+  'criteo.net': { name: 'Criteo', type: 'Identity Resolution', desc: 'Cross-device identity and retargeting' },
+  'drawbridge.com': { name: 'Drawbridge/LinkedIn', type: 'Identity Resolution', desc: 'Cross-device identity graph' },
+  'liveintent.com': { name: 'LiveIntent', type: 'Identity Resolution', desc: 'Email-based identity resolution' },
+  'liadm.com': { name: 'LiveIntent', type: 'Identity Resolution', desc: 'Email-based identity resolution' },
+  'intentmedia.net': { name: 'Intent Media', type: 'Identity Resolution', desc: 'Identity and commerce data' },
+  'britepool.com': { name: 'BritePool', type: 'Identity Resolution', desc: 'Authenticated identity resolution' },
+  'idx.lat': { name: 'IDx', type: 'Identity Resolution', desc: 'Identity resolution for Latin America' },
+  'merkle.com': { name: 'Merkle', type: 'Identity Resolution', desc: 'People-based identity resolution' },
+  'merkleinc.com': { name: 'Merkle', type: 'Identity Resolution', desc: 'People-based identity resolution' },
+  'zetaglobal.com': { name: 'Zeta Global', type: 'Identity Resolution', desc: 'Identity data cloud and marketing' },
+  'demdex.net': { name: 'Adobe Audience Manager', type: 'Audience Data', desc: 'Audience segmentation and data sales' },
+  'omtrdc.net': { name: 'Adobe Audience Manager', type: 'Audience Data', desc: 'Audience segmentation and data sales' },
+  'krxd.net': { name: 'Salesforce DMP/Krux', type: 'Audience Data', desc: 'Audience data platform' },
+  'salesforceliveagent.com': { name: 'Salesforce', type: 'Audience Data', desc: 'Customer data platform' },
+  'permutive.com': { name: 'Permutive', type: 'Audience Data', desc: 'Publisher audience data platform' },
+  'permutive.app': { name: 'Permutive', type: 'Audience Data', desc: 'Publisher audience data platform' },
+  'oracleinfinity.io': { name: 'Oracle Data Cloud', type: 'Audience Data', desc: 'Audience data segments for sale' },
+  'grapeshot.co.uk': { name: 'Oracle Grapeshot', type: 'Audience Data', desc: 'Contextual and audience intelligence' },
+  'moatads.com': { name: 'Oracle Moat', type: 'Audience Data', desc: 'Attention analytics feeding audience data' },
+  '1rx.io': { name: 'Wunderman/RocketFuel', type: 'Audience Data', desc: 'Predictive audience data' },
+  'kochava.com': { name: 'Kochava', type: 'Audience Data', desc: 'Mobile audience data and attribution' },
+  'adsymptotic.com': { name: 'AdSymptotic', type: 'Audience Data', desc: 'Audience data enrichment' },
+  'narrativ.com': { name: 'Narrativ', type: 'Audience Data', desc: 'Commerce audience data' },
+  'webtrekk.net': { name: 'Webtrekk/Mapp', type: 'Audience Data', desc: 'Customer intelligence and audience data' },
+  'mxptint.net': { name: 'Mapp Digital', type: 'Audience Data', desc: 'Customer data platform' },
+  'blueconic.net': { name: 'BlueConic', type: 'Audience Data', desc: 'Customer data platform' },
+  'treasuredata.com': { name: 'Treasure Data', type: 'Audience Data', desc: 'Enterprise customer data platform' },
+  'segment.io': { name: 'Twilio Segment', type: 'Audience Data', desc: 'Customer data infrastructure' },
+  'segment.com': { name: 'Twilio Segment', type: 'Audience Data', desc: 'Customer data infrastructure' },
+  'tealiumiq.com': { name: 'Tealium', type: 'Audience Data', desc: 'Customer data platform and audience hub' },
+  'tiqcdn.com': { name: 'Tealium', type: 'Audience Data', desc: 'Customer data platform and audience hub' }
 };
 
 const PURPOSE_DOMAINS = {
@@ -429,38 +573,56 @@ function getRootDomain(hostname) {
 
 function classifyDomain(domain, details) {
   const root = getRootDomain(domain);
+  let result;
 
   // Pass 1: exact domain DB
-  if (TRACKER_DOMAINS[root]) return { category: TRACKER_DOMAINS[root], risky: true };
-  if (TRACKER_DOMAINS[domain]) return { category: TRACKER_DOMAINS[domain], risky: true };
-  for (const [purpose, domains] of Object.entries(PURPOSE_DOMAINS)) {
-    if (domains.some(d => domain.includes(d))) return { category: purpose, risky: false };
-  }
+  if (TRACKER_DOMAINS[root]) result = { category: TRACKER_DOMAINS[root], risky: true };
+  else if (TRACKER_DOMAINS[domain]) result = { category: TRACKER_DOMAINS[domain], risky: true };
+  else {
+    let found = false;
+    for (const [purpose, domains] of Object.entries(PURPOSE_DOMAINS)) {
+      if (domains.some(d => domain.includes(d))) { result = { category: purpose, risky: false }; found = true; break; }
+    }
 
-  // Pass 2: pattern regex
-  for (const { pattern, category, risky } of DOMAIN_PATTERNS) {
-    if (pattern.test(domain)) return { category, risky };
-  }
-
-  // Pass 3: request heuristics (if details provided)
-  if (details) {
-    // 1x1 pixel detection
-    if (details.type === 'image') {
-      const cl = getHeader(details.responseHeaders, 'content-length');
-      if (cl !== null && parseInt(cl, 10) < 200) {
-        return { category: 'Analytics', risky: true, trackingPixel: true };
+    if (!found) {
+      // Pass 2: pattern regex
+      for (const { pattern, category, risky } of DOMAIN_PATTERNS) {
+        if (pattern.test(domain)) { result = { category, risky }; found = true; break; }
       }
     }
-    // Beacon POST detection
-    if (details.method === 'POST' && (details.statusCode === 204 || details.statusCode === 200)) {
-      const cl = getHeader(details.responseHeaders, 'content-length');
-      if (cl !== null && parseInt(cl, 10) === 0) {
-        return { category: 'Analytics', risky: true, beaconPost: true };
+
+    if (!found) {
+      // Pass 3: request heuristics (if details provided)
+      if (details) {
+        if (details.type === 'image') {
+          const cl = getHeader(details.responseHeaders, 'content-length');
+          if (cl !== null && parseInt(cl, 10) < 200) {
+            result = { category: 'Analytics', risky: true, trackingPixel: true };
+            found = true;
+          }
+        }
+        if (!found && details.method === 'POST' && (details.statusCode === 204 || details.statusCode === 200)) {
+          const cl = getHeader(details.responseHeaders, 'content-length');
+          if (cl !== null && parseInt(cl, 10) === 0) {
+            result = { category: 'Analytics', risky: true, beaconPost: true };
+            found = true;
+          }
+        }
       }
     }
+
+    if (!found) result = { category: 'unknown', risky: false };
   }
 
-  return { category: 'unknown', risky: false };
+  // Enrich with broker metadata
+  const brokerInfo = BROKER_META[root] || BROKER_META[domain];
+  if (brokerInfo) {
+    result.brokerName = brokerInfo.name;
+    result.brokerType = brokerInfo.type;
+    result.brokerDesc = brokerInfo.desc;
+  }
+
+  return result;
 }
 
 function getHeader(headers, name) {
@@ -505,8 +667,10 @@ browser.webRequest.onBeforeRequest.addListener(
         url: details.url,
         domain,
         requests: 0,
-        thirdParties: {}
+        thirdParties: {},
+        brokerCompanies: {}
       };
+      updateBadge(details.tabId, 0);
     }
 
     // Record timing start
@@ -652,6 +816,10 @@ browser.webRequest.onCompleted.addListener(
     if (tabInfo) {
       tabInfo.requests++;
       if (thirdParty) tabInfo.thirdParties[domain] = true;
+      if (thirdParty && classification.brokerName) {
+        tabInfo.brokerCompanies[classification.brokerName] = true;
+        updateBadge(details.tabId, Object.keys(tabInfo.brokerCompanies).length);
+      }
     }
 
     // Update totals
@@ -692,12 +860,17 @@ browser.tabs.onRemoved.addListener((tabId) => {
   delete traffic.tabs[tabId];
 });
 
-/* ── Open dashboard on icon click ── */
-browser.browserAction.onClicked.addListener(() => {
-  browser.tabs.create({ url: 'dashboard.html' });
-});
+/* ── Badge ── */
+function updateBadge(tabId, count) {
+  const text = count > 0 ? String(count) : '';
+  browser.browserAction.setBadgeText({ text, tabId });
+  browser.browserAction.setBadgeBackgroundColor({
+    color: count > 0 ? '#e056a0' : '#555555',
+    tabId
+  });
+}
 
-/* ── Messaging: dashboard requests data ── */
+/* ── Messaging: dashboard + popup request data ── */
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'getTraffic') {
     const domains = {};

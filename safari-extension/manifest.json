@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
   "name": "wearebaked",
-  "version": "0.2.0",
-  "description": "See who your browser is talking to. A simple network traffic dashboard for everyone.",
+  "version": "0.5.0",
+  "description": "See who your browser is talking to — and who's selling your data.",
   "permissions": [
     "webRequest",
+    "activeTab",
     "<all_urls>"
   ],
   "background": {
@@ -14,7 +15,8 @@
     "default_icon": {
       "48": "icon48.png",
       "128": "icon128.png"
-    }
+    },
+    "default_popup": "popup.html"
   },
   "icons": {
     "48": "icon48.png",

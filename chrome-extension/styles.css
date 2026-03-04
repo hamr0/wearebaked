@@ -204,6 +204,44 @@ h1 .icon { width: 32px; height: 32px; background: #fff; border-radius: 50%; padd
 .cat-auth { background: rgba(52,152,219,0.12); color: var(--blue); }
 .cat-maps { background: rgba(46,204,113,0.12); color: var(--green); }
 
+/* Data Broker pill */
+.cat-databroker { background: rgba(224,86,160,0.2); color: #e056a0; }
+
+/* DATA BROKER badge on domain items */
+.pill-broker {
+  background: rgba(224,86,160,0.25);
+  color: #e056a0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* Broker section items */
+.broker-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.broker-item .domain-name { color: var(--accent); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.broker-type-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e056a0;
+  margin: 16px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.broker-type-header:first-child { margin-top: 0; }
+.broker-desc { color: var(--text2); font-size: 0.78rem; flex-shrink: 0; }
+
 /* Beacon pill */
 .cat-beacon { background: rgba(231,76,60,0.25); color: var(--red); font-weight: 700; }
 

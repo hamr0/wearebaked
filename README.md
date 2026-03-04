@@ -1,15 +1,20 @@
 # wearebaked
 
-See who your browser is talking to. A real-time network traffic dashboard that shows every connection your browser makes.
+See who your browser is talking to — and who's selling your data.
 
-All analysis is local. No data leaves your browser. No accounts. No tracking.
+A real-time network traffic dashboard and data broker detector. Every connection your browser makes — categorized, scored, and laid out in a single view. Click the icon for a quick broker verdict, or open the full dashboard to see every request, redirect chain, beacon, and data flow.
 
-Available as a **Chrome extension**, **Firefox extension** (incl. Android), and **Safari extension** (macOS).
+Consolidates **wearesold** (data broker detection) and **weareopen** (third-party script audit) into one extension. 550+ known domains, 84 data broker profiles, three-pass classification, beaconing detection, redirect chain mapping, and data flow analysis — all running locally in your browser.
 
-Open the dashboard to see which domains your browser contacts, how many are third-party trackers, and what categories they fall into. Filter the live request feed by domain, category, or third-party status.
+No data is collected. No data is transmitted. No accounts. No cloud.
 
+Available for **Chrome**, **Firefox** (incl. Android), and **Safari** (macOS).
+
+- **Data broker popup** — click the icon to see which data brokers are active on the current page, grouped by type (Consumer Data Broker, Identity Resolution, Data Marketplace, Audience Data)
+- **84 known data brokers** — detects Acxiom, Experian, LiveRamp, Oracle BlueKai, Criteo, Nielsen, and 78 more with company names, types, and descriptions
 - **Privacy summary** — how many sites you visited vs. how many domains your browser talked to behind your back
-- **Category breakdown** — Advertising, Analytics, Fingerprinting, Social Tracking, CDN, and 10+ more
+- **3P Scripts card** — total third-party script requests at a glance (from weareopen)
+- **Category breakdown** — Advertising, Analytics, Fingerprinting, Social Tracking, Data Broker, CDN, and 10+ more
 - **Beaconing detection** — spots domains pinging on a timer
 - **Redirect chains** — see when one click bounces through five tracking domains
 - **Data flow** — which domains are uploading your data
@@ -26,55 +31,70 @@ No data is collected. No data is transmitted. No accounts. No cloud. Everything 
 
 **Safari** — Built via GitHub Actions (requires macOS). Download the `.app` artifact from the [Actions tab](../../actions/workflows/build-safari.yml), or build from source (see below).
 
-Click the extension icon to open the dashboard.
+Click the extension icon to see the data broker popup for the current page. Click "Open Full Dashboard" in the popup for the complete network traffic view.
 
 ### Load from source (developer mode)
 
 **Chrome/Chromium:**
 1. Open `chrome://extensions/` → enable **Developer mode**
 2. Click **Load unpacked** → select `chrome-extension/`
-3. Click the wearebaked icon in the toolbar to open the dashboard
+3. Click the wearebaked icon to see the broker popup, or "Open Full Dashboard" for the full view
 
 **Firefox:**
 1. Open `about:debugging#/runtime/this-firefox`
 2. Click **Load Temporary Add-on** → select `firefox-extension/manifest.json`
-3. Click the wearebaked icon in the toolbar to open the dashboard
+3. Click the wearebaked icon to see the broker popup, or "Open Full Dashboard" for the full view
 
 **Safari (macOS only):**
 1. Build the Xcode project (see "Building the Safari extension" below), or download the `.app` from GitHub Actions
 2. Run the generated `wearebaked.app` once to register the extension
 3. Open Safari → Settings → Extensions → enable **wearebaked**
-4. Click the extension icon in the toolbar to open the dashboard
+4. Click the extension icon to see the broker popup, or "Open Full Dashboard" for the full view
 5. To test source changes: re-run `xcrun safari-web-extension-converter` and rebuild
 
 ### Manual testing checklist
 
-After loading the extension, verify the following:
+After loading the extension, browse a few sites (amazon.com, nytimes.com, facebook.com work well) then verify:
 
 1. **Icon** — The toolbar icon and extension management page show a black camera on a white circle
-2. **Dashboard loads** — Click the icon → dashboard opens with "Waiting for traffic data…" until you browse
-3. **Privacy Summary** — Shows "You visited X sites. Your browser talked to Y other domains." with a color-coded risk bar
-4. **Summary cards** — Total Requests, Unique Domains, Third-Party %, Trackers/Ads, 3P Domains, WebSockets
-5. **Category breakdown** — Bar chart with color-coded categories
-6. **Live Request Feed** — Expand the feed section:
-   - Filter bar visible with search input, category dropdown, and "3rd party only" toggle
-   - Type in search → filters rows by domain
-   - Select a category → filters rows by that category
-   - Check "3rd party only" → hides first-party rows
-   - All three filters combine correctly
-   - Dropdown repopulates with correct categories on each refresh
-7. **Collapsible sections** — Beaconing Alerts, New Domains, Redirect Chains, Data Flow, WebSockets all toggle open/closed
-8. **Tab favicon** — Browser tab shows the camera-on-white-circle icon
-9. **Auto-refresh** — Data updates every 3 seconds when checkbox is checked
-10. **Clear Data** — Clears all captured traffic
+2. **Popup** — Click the icon → popup shows current site domain, broker count verdict, and broker breakdown grouped by type
+3. **Popup — no brokers** — On a clean site, shows "0" with "No data broker connections found."
+4. **Popup — with brokers** — On a site with broker connections, shows company names, types, and descriptions
+5. **Popup — dashboard link** — "Open Full Dashboard" link opens the full dashboard in a new tab
+6. **Dashboard loads** — Dashboard shows "Waiting for traffic data…" until you browse
+7. **Privacy Summary** — Shows "You visited X sites. Your browser talked to Y other domains." with a color-coded risk bar
+8. **Summary cards** — Total Requests, Unique Domains, Third-Party %, Trackers/Ads, 3P Domains, **3P Scripts**, WebSockets (7 cards)
+9. **Category breakdown** — Bar chart with color-coded categories including **Data Broker** (hot pink)
+10. **Domains of Concern** — Shows concern-scored domains; broker domains display a pink **DATA BROKER** pill badge
+11. **Data Brokers section** — Collapsible section between Active Tabs and Beaconing Alerts, groups brokers by type with company name, description, and request count
+12. **Live Request Feed** — Expand the feed section:
+    - Filter bar visible with search input, category dropdown, and "3rd party only" toggle
+    - Type in search → filters rows by domain
+    - Select a category → filters rows by that category
+    - Check "3rd party only" → hides first-party rows
+    - All three filters combine correctly
+    - Dropdown repopulates with correct categories on each refresh
+13. **Collapsible sections** — Data Brokers, Beaconing Alerts, New Domains, Redirect Chains, Data Flow, WebSockets all toggle open/closed
+14. **Tab favicon** — Browser tab shows the camera-on-white-circle icon
+15. **Auto-refresh** — Data updates every 3 seconds when checkbox is checked
+16. **Clear Data** — Clears all captured traffic
 
-## What the Dashboard Shows
+## What You See
+
+### Popup (click the icon)
+
+- **Verdict** — current site domain, broker count, and severity level (clean/warn/bad)
+- **Broker breakdown** — grouped by type (Consumer Data Broker, Data Marketplace, Identity Resolution, Audience Data) with company names and descriptions
+- **Dashboard link** — "Open Full Dashboard" opens the full network traffic view
+
+### Dashboard
 
 - **Privacy summary** — sentence summary of sites visited vs. domains contacted, with a risk breakdown bar (risky/unknown/benign) and alert line
-- **Summary cards** — total requests, unique domains, third-party percentage, tracker/ad count, WebSocket connections
-- **Domains of concern** (Chrome) / **Top third-party domains** (Firefox) — ranked by concern score or request count with category badges
-- **Category breakdown** — visual bar chart of all request categories (Advertising, Analytics, Social Tracking, Fingerprinting, CDN, and more)
+- **Summary cards** — total requests, unique domains, third-party %, tracker/ad count, 3P domains, 3P scripts, WebSocket connections
+- **Domains of concern** — ranked by concern score with category badges and pink DATA BROKER pill for broker domains
+- **Category breakdown** — visual bar chart of all request categories (Advertising, Analytics, Social Tracking, Fingerprinting, Data Broker, CDN, and more)
 - **Active tabs** — per-tab request counts and third-party domain lists
+- **Data brokers** — collapsible section showing all detected broker domains grouped by type with company name, broker sub-type, description, and request count
 - **Beaconing alerts** — domains sending requests at regular intervals (tracking beacons)
 - **New domains** — first-seen domains this session with yellow NEW badges
 - **Redirect chains** — visual A → B → C display of request redirect paths
@@ -103,7 +123,7 @@ Flags domains seen for the first time in the current browsing session. Helps spo
 
 Three-pass classification system to minimize "unknown" traffic:
 
-1. **Domain database** — 500+ known domains mapped to categories (Advertising, Analytics, Social Tracking, Fingerprinting, Error Monitoring, A/B Testing, Chat/Support, Video/Media, Consent, Email/CRM, CDN, Fonts, Captcha, Payment, Auth, Maps)
+1. **Domain database** — 550+ known domains mapped to categories (Advertising, Analytics, Social Tracking, Fingerprinting, Data Broker, Error Monitoring, A/B Testing, Chat/Support, Video/Media, Consent, Email/CRM, CDN, Fonts, Captcha, Payment, Auth, Maps). Data Broker domains are enriched with company name, broker sub-type, and description from the BROKER_META database (84 entries)
 2. **Name patterns** — regex matching on domain names for keywords like `track`, `pixel`, `beacon`, `telemetry`, `adserver`, `metrics`, `collect`, `analytics`, `fingerprint`, etc.
 3. **Request heuristics** — 1x1 tracking pixel detection (image type + tiny Content-Length) and beacon POST detection (POST + empty response body)
 
@@ -122,25 +142,34 @@ No data is collected, transmitted, or stored outside the browser. All processing
 wearebaked/
 ├── chrome-extension/
 │   ├── manifest.json      # MV3 manifest
-│   ├── background.js      # Traffic capture + classification engine
-│   ├── dashboard.html      # Dashboard page
-│   ├── dashboard.js        # Dashboard rendering + feed filters
+│   ├── background.js      # Traffic capture + classification engine + BROKER_META
+│   ├── popup.html          # Broker popup page
+│   ├── popup.js            # Popup rendering (broker verdict per tab)
+│   ├── popup.css           # Popup styles
+│   ├── dashboard.html      # Full dashboard page
+│   ├── dashboard.js        # Dashboard rendering + feed filters + broker section
 │   ├── styles.css          # Dashboard styles
 │   ├── icon48.png          # Extension icon (white circle)
 │   ├── icon128.png         # Extension icon large (white circle)
 │   └── favicon.png         # Tab favicon
 ├── firefox-extension/
 │   ├── manifest.json      # MV2 manifest with gecko settings
-│   ├── background.js      # Firefox-adapted (browser.* APIs)
-│   ├── dashboard.html      # Dashboard page
-│   ├── dashboard.js        # Firefox-adapted (browser.* APIs) + feed filters
+│   ├── background.js      # Firefox-adapted (browser.* APIs) + BROKER_META
+│   ├── popup.html          # Broker popup page
+│   ├── popup.js            # Popup rendering (browser.* APIs, Promise-based)
+│   ├── popup.css           # Popup styles
+│   ├── dashboard.html      # Full dashboard page
+│   ├── dashboard.js        # Dashboard rendering + feed filters + broker section
 │   ├── styles.css          # Dashboard styles
 │   ├── icon48.png          # Extension icon (white circle)
 │   ├── icon128.png         # Extension icon large (white circle)
 │   └── favicon.png         # Tab favicon
 ├── safari-extension/
 │   ├── manifest.json      # MV2 manifest (no gecko-specific settings)
-│   ├── background.js      # Same as Firefox (browser.* APIs)
+│   ├── background.js      # Same as Firefox (browser.* APIs) + BROKER_META
+│   ├── popup.html          # Same as Firefox
+│   ├── popup.js            # Same as Firefox
+│   ├── popup.css           # Same as Firefox
 │   ├── dashboard.html      # Same as Firefox
 │   ├── dashboard.js        # Same as Firefox
 │   ├── styles.css          # Same as Firefox
@@ -183,6 +212,25 @@ xcodebuild -scheme "wearebaked (macOS)" -configuration Release \
 The Safari extension source is identical to Firefox (same `browser.*` API, MV2 manifest) with the `browser_specific_settings.gecko` block removed.
 
 ## Changelog
+
+### v0.5.1
+- **Firefox ETP fix** — broker domains now detected even when Firefox Enhanced Tracking Protection blocks them (early classification in `onBeforeRequest` + `onErrorOccurred`)
+- **Firefox messaging fix** — popup message handler returns Promises (native Firefox pattern) instead of `sendResponse` + `return true`
+- Updated popup tagline to "network monitor · broker detector"
+- Updated manifest descriptions and version across all variants
+- Changed Firefox gecko ID for new AMO listing
+
+### v0.5.0
+- **Folded wearesold** (data broker detector) into wearebaked — 84 broker domains with company names, types, and descriptions
+- **Folded weareopen** (third-party script audit) — 3P Scripts summary card
+- **Broker popup** — click the extension icon to see data broker verdict for the current page, grouped by broker type
+- **Data Brokers dashboard section** — collapsible section showing all detected brokers grouped by type
+- **DATA BROKER pill badge** — broker domains in "Domains of Concern" show a pink badge
+- **Data Broker category** — new category (hot pink) in bar chart, RISKY_CATEGORIES, and domain classification
+- Reclassified ~28 domains from Fingerprinting/Advertising/Analytics/Social Tracking to Data Broker
+- Added ~54 new broker domains to TRACKER_DOMAINS
+- `classifyDomain()` now enriches results with `brokerName`, `brokerType`, `brokerDesc` from BROKER_META
+- Manifests updated with `default_popup` (icon click opens popup instead of dashboard)
 
 ### v0.4.1
 - Added Safari extension support (macOS) — based on Firefox source (`browser.*` API, MV2)

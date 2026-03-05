@@ -23,34 +23,23 @@ Available for **Chrome**, **Firefox** (incl. Android), and **Safari** (macOS).
 
 No data is collected. No data is transmitted. No accounts. No cloud. Everything runs locally in your browser.
 
-## Install
+## Try It Now
 
-**Chrome** — [Chrome Web Store](https://chromewebstore.google.com/) _(pending review)_
+Store approval pending — install locally in under a minute:
 
-**Firefox** — [Firefox Add-ons](https://addons.mozilla.org/) _(pending review)_
+### Chrome
+1. Download this repo (Code → Download ZIP) and unzip
+2. Go to `chrome://extensions` and turn on **Developer mode** (top right)
+3. Click **Load unpacked** → select the `chrome-extension` folder
+4. That's it — browse any site and click the extension icon
 
-**Safari** — Built via GitHub Actions (requires macOS). Download the `.app` artifact from the [Actions tab](../../actions/workflows/build-safari.yml), or build from source (see below).
+### Firefox
+1. Download this repo (Code → Download ZIP) and unzip
+2. Go to `about:debugging#/runtime/this-firefox`
+3. Click **Load Temporary Add-on** → pick any file in the `firefox-extension` folder
+4. That's it — browse any site and click the extension icon
 
-Click the extension icon to see the data broker popup for the current page. Click "Open Full Dashboard" in the popup for the complete network traffic view.
-
-### Load from source (developer mode)
-
-**Chrome/Chromium:**
-1. Open `chrome://extensions/` → enable **Developer mode**
-2. Click **Load unpacked** → select `chrome-extension/`
-3. Click the wearebaked icon to see the broker popup, or "Open Full Dashboard" for the full view
-
-**Firefox:**
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click **Load Temporary Add-on** → select `firefox-extension/manifest.json`
-3. Click the wearebaked icon to see the broker popup, or "Open Full Dashboard" for the full view
-
-**Safari (macOS only):**
-1. Build the Xcode project (see "Building the Safari extension" below), or download the `.app` from GitHub Actions
-2. Run the generated `wearebaked.app` once to register the extension
-3. Open Safari → Settings → Extensions → enable **wearebaked**
-4. Click the extension icon to see the broker popup, or "Open Full Dashboard" for the full view
-5. To test source changes: re-run `xcrun safari-web-extension-converter` and rebuild
+> Firefox temporary add-ons reset when you close the browser — just re-load next session.
 
 ### Manual testing checklist
 

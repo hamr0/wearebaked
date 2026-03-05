@@ -6,6 +6,9 @@ A real-time network traffic dashboard and data broker detector. Every connection
 
 No data is collected. No data is transmitted. No accounts. No cloud.
 
+![wearebaked popup](store-assets/baked1.png)
+![wearebaked dashboard](store-assets/baked2.png)
+
 ## What it detects
 - Data brokers active on the current page (Acxiom, LiveRamp, Oracle BlueKai, Criteo, and 80 more)
 - Third-party script requests and tracker domains

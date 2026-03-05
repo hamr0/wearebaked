@@ -4,3 +4,6 @@ wearebaked-firefox.zip
 icon48_original.png
 icon128_original.png
 .claude/
+*.kate-swp
+__pycache__/
+*.kate-swp
